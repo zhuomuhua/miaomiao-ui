@@ -2,29 +2,20 @@
     <div class="search_body">
         <div class="search_input">
             <div class="search_input_wrapper">
-                <i class="iconfont icon-sousuo"></i>
-                <input type="text">
+                <i class="iconfont icon-sousuo" @click="searchRequest"></i>
+                <input type="text" @keypress.enter="searchRequest" v-model="searchParams.title">
             </div>
         </div>
         <div class="search_result">
             <h3>电影/电视剧/综艺</h3>
             <ul>
-                <li>
-                    <div class="img"><img src="images/movie_1.jpg"></div>
+                <li v-for="movieObj in movies" :key="movieObj.id">
+                    <div class="img"><img :src="movieObj.img | setWH('120.180')"></div>
                     <div class="info">
-                        <p><span>无名之辈</span><span>8.5</span></p>
-                        <p>A Cool Fish</p>
-                        <p>剧情,喜剧,犯罪</p>
-                        <p>2018-11-16</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="img"><img src="images/movie_1.jpg"></div>
-                    <div class="info">
-                        <p><span>无名之辈</span><span>8.5</span></p>
-                        <p>A Cool Fish</p>
-                        <p>剧情,喜剧,犯罪</p>
-                        <p>2018-11-16</p>
+                        <p><span>{{movieObj.nm}}</span><span>{{movieObj.sc}}</span></p>
+                        <p>{{movieObj.enm}}</p>
+                        <p>{{movieObj.cat}}</p>
+                        <p>{{movieObj.rt}}</p>
                     </div>
                 </li>
             </ul>
@@ -36,12 +27,30 @@
     export default {
         name: "search",
         data() {
-            return {};
+            return {
+                searchParams: {
+                    title: ''
+                },
+                movies: []
+            };
         },
         watch: {},
         created() {
         },
-        methods: {},
+        mounted() {
+        },
+        methods: {
+            async searchRequest() {
+                let cityId = 10;
+                let title = this.searchParams.title;
+                let {data: {data: {movies: {list}}, status, msg}} = await this.axios.get(`/api/searchList?cityId=${cityId}&kw=${title}`);
+                if (status == 0) {
+                    this.movies = list;
+                } else {
+                    console.log(msg)
+                }
+            }
+        },
         computed: {}
     };
 </script>
