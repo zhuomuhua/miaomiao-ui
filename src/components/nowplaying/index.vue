@@ -1,5 +1,6 @@
 <template>
-    <div class="movie_body">
+    <div class="movie_body" ref="movieBody">
+        <Loading_one v-if="isLoading"/>
         <ul>
             <li v-for="movieObj in movieList" :key="movieObj.id">
                 <div class="pic_show"><img :src="movieObj.img | setWH('128.180')"></div>
@@ -15,7 +16,6 @@
             </li>
         </ul>
     </div>
-
 </template>
 
 <script>
@@ -23,7 +23,8 @@
         name: "nowplaying",
         data() {
             return {
-                movieList: []
+                movieList: [],
+                isLoading: true
             };
         },
         watch: {},
@@ -37,6 +38,7 @@
                 let {data: {data: {movieList}, status, msg}} = await this.axios.get('/api/movieOnInfoList?cityId=10');
                 if (status == 0) {
                     this.movieList = movieList;
+                    this.isLoading =  false;
                 } else {
                     console.log(msg);
                 }
