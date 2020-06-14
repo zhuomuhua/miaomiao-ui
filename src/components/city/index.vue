@@ -4,7 +4,7 @@
             <div class="city_hot">
                 <h2>热门城市</h2>
                 <ul class="clearfix">
-                    <li v-for="hotObj in hotList">
+                    <li v-for="hotObj in hotList" @click="handleToCity(hotObj)">
                         {{hotObj.name}}
                     </li>
                 </ul>
@@ -13,7 +13,7 @@
                 <div v-for="indexObj in cityList" :key="indexObj.index">
                     <h2>{{indexObj.index}}</h2>
                     <ul>
-                        <li v-for="cityObj in indexObj.list" :key="cityObj.id">
+                        <li v-for="cityObj in indexObj.list" :key="cityObj.id" @click="handleToCity(cityObj)">
                             {{cityObj.name}}
                         </li>
                     </ul>
@@ -49,6 +49,14 @@
             handleToIndex(index) {
                 let h2 = this.$refs.citySort.getElementsByTagName('h2');
                 this.$refs.citySort.parentNode.scrollTop = h2[index].offsetTop;
+            },
+            handleToCity(obj) {
+                //修改状态值
+                this.$store.commit('city/CITY_INFO', obj);
+                //本地存在上一次的地址
+                window.localStorage.setItem('currentCityName', obj.name);
+                window.localStorage.setItem('currentCityId', obj.id);
+                this.$router.push('/movie/nowplaying');
             },
             async loadData() {
                 let {data: {data: {cities}, status, msg}} = await this.axios.get('/api/cityList')
